@@ -13,8 +13,8 @@ import { EntityHelper } from 'src/utils/entity-helper';
 
 @Entity()
 export class Forgot extends EntityHelper {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Allow()
   @Column()

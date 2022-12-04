@@ -11,7 +11,7 @@ export default class CreateAdmin implements Seeder {
       .createQueryBuilder()
       .select()
       .from(User, 'User')
-      .where('"User"."roleId" = :roleId', { roleId: RoleEnum.user })
+      .where('"User"."roleId" = :roleId', { roleId: RoleEnum.User })
       .getCount();
 
     if (countUser === 0) {
@@ -26,7 +26,7 @@ export default class CreateAdmin implements Seeder {
             email: 'john.doe@example.com',
             password: 'secret',
             role: {
-              id: RoleEnum.user,
+              code: RoleEnum.User,
               name: 'Admin',
             },
             status: {

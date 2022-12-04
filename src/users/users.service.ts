@@ -33,7 +33,7 @@ export class UsersService {
     });
   }
 
-  update(id: number, updateProfileDto: UpdateUserDto) {
+  update(id: string, updateProfileDto: UpdateUserDto) {
     return this.usersRepository.save(
       this.usersRepository.create({
         id,
@@ -42,7 +42,7 @@ export class UsersService {
     );
   }
 
-  async softDelete(id: number): Promise<void> {
+  async softDelete(id: string): Promise<void> {
     await this.usersRepository.softDelete(id);
   }
 }

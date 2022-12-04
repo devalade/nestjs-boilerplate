@@ -5,11 +5,43 @@ import { RoleEnum } from 'src/roles/roles.enum';
 
 export default class CreateRole implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<void> {
+    const countGuru = await connection
+      .createQueryBuilder()
+      .select()
+      .from(Role, 'Role')
+      .where('"Role"."code" = :code', { code: RoleEnum.Guru })
+      .getCount();
+
+    if (countGuru === 0) {
+      await connection
+        .createQueryBuilder()
+        .insert()
+        .into(Role)
+        .values([{ code: RoleEnum.Guru, name: 'Guru' }])
+        .execute();
+    }
+
+    const countSuperAdmin = await connection
+      .createQueryBuilder()
+      .select()
+      .from(Role, 'Role')
+      .where('"Role"."code" = :code', { code: RoleEnum.SuperAdmin })
+      .getCount();
+
+    if (countSuperAdmin === 0) {
+      await connection
+        .createQueryBuilder()
+        .insert()
+        .into(Role)
+        .values([{ code: RoleEnum.SuperAdmin, name: 'SuperAdmin' }])
+        .execute();
+    }
+
     const countUser = await connection
       .createQueryBuilder()
       .select()
       .from(Role, 'Role')
-      .where('"Role"."id" = :id', { id: RoleEnum.user })
+      .where('"Role"."code" = :code', { code: RoleEnum.User })
       .getCount();
 
     if (countUser === 0) {
@@ -17,7 +49,7 @@ export default class CreateRole implements Seeder {
         .createQueryBuilder()
         .insert()
         .into(Role)
-        .values([{ id: RoleEnum.user, name: 'User' }])
+        .values([{ code: RoleEnum.User, name: 'User' }])
         .execute();
     }
 
@@ -25,7 +57,7 @@ export default class CreateRole implements Seeder {
       .createQueryBuilder()
       .select()
       .from(Role, 'Role')
-      .where('"Role"."id" = :id', { id: RoleEnum.admin })
+      .where('"Role"."code" = :code', { code: RoleEnum.Admin })
       .getCount();
 
     if (countAdmin === 0) {
@@ -33,7 +65,7 @@ export default class CreateRole implements Seeder {
         .createQueryBuilder()
         .insert()
         .into(Role)
-        .values([{ id: RoleEnum.admin, name: 'Admin' }])
+        .values([{ code: RoleEnum.Admin, name: 'Admin' }])
         .execute();
     }
   }

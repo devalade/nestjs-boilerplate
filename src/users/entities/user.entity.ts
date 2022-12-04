@@ -20,8 +20,8 @@ import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 
 @Entity()
 export class User extends EntityHelper {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ unique: true, nullable: true })
   email: string | null;

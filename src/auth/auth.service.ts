@@ -17,12 +17,14 @@ import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { UsersService } from 'src/users/users.service';
 import { ForgotService } from 'src/forgot/forgot.service';
 import { MailService } from 'src/mail/mail.service';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private usersService: UsersService,
+    private roleService: RolesService,
     private forgotService: ForgotService,
     private mailService: MailService,
   ) {}
@@ -38,27 +40,26 @@ export class AuthService {
     if (
       !user ||
       (user &&
-        !(onlyAdmin ? [RoleEnum.admin] : [RoleEnum.user]).includes(
-          user.role.id,
+        !(onlyAdmin ? [RoleEnum.Admin] : [RoleEnum.User]).includes(
+          user.role.code as RoleEnum,
         ))
     ) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'notFound',
+            message: 'Invalid email or password',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
-
     if (user.provider !== AuthProvidersEnum.email) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: `needLoginViaProvider:${user.provider}`,
+            message: `needLoginViaProvider:${user.provider}`,
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -71,7 +72,7 @@ export class AuthService {
     );
 
     if (isValidPassword) {
-      const token = await this.jwtService.sign({
+      const token = this.jwtService.sign({
         id: user.id,
         role: user.role,
       });
@@ -82,7 +83,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            password: 'incorrectPassword',
+            message: 'Invalid email or password',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -114,9 +115,8 @@ export class AuthService {
     } else if (userByEmail) {
       user = userByEmail;
     } else {
-      const role = plainToClass(Role, {
-        id: RoleEnum.user,
-      });
+      const role = await this.roleService.getRoleByCodeHandler(RoleEnum.User);
+
       const status = plainToClass(Status, {
         id: StatusEnum.active,
       });
@@ -153,24 +153,25 @@ export class AuthService {
       .update(randomStringGenerator())
       .digest('hex');
 
-    const user = await this.usersService.create({
+    const role = await this.roleService.getRoleByCodeHandler(RoleEnum.User);
+
+    await this.usersService.create({
       ...dto,
       email: dto.email,
       role: {
-        id: RoleEnum.user,
+        id: role.id,
       } as Role,
       status: {
         id: StatusEnum.inactive,
       } as Status,
       hash,
     });
-
-    await this.mailService.userSignUp({
-      to: user.email,
-      data: {
-        hash,
-      },
-    });
+    // await this.mailService.userSignUp({
+    //   to: user.email,
+    //   data: {
+    //     hash,
+    //   },
+    // });
   }
 
   async confirmEmail(hash: string): Promise<void> {

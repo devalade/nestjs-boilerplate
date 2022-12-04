@@ -27,6 +27,7 @@ import { MailConfigService } from './mail/mail-config.service';
 import { ForgotModule } from './forgot/forgot.module';
 import { MailModule } from './mail/mail.module';
 import { HomeModule } from './home/home.module';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { HomeModule } from './home/home.module';
       resolvers: [new HeaderResolver(['x-custom-lang'])],
     }),
     UsersModule,
+    RolesModule,
     FilesModule,
     AuthModule,
     AuthFacebookModule,
