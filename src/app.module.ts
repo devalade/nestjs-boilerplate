@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { UsersModule } from './users/users.module';
 import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
@@ -28,6 +29,7 @@ import { ForgotModule } from './forgot/forgot.module';
 import { MailModule } from './mail/mail.module';
 import { HomeModule } from './home/home.module';
 import { RolesModule } from './roles/roles.module';
+import { AbilityModule } from './ability/ability.module';
 
 @Module({
   imports: [
@@ -45,6 +47,11 @@ import { RolesModule } from './roles/roles.module';
         appleConfig,
       ],
       envFilePath: ['.env'],
+    }),
+
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', 'files'),
+      serveRoot: '/uploads',
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
@@ -79,6 +86,7 @@ import { RolesModule } from './roles/roles.module';
     ForgotModule,
     MailModule,
     HomeModule,
+    AbilityModule,
   ],
 })
 export class AppModule {}

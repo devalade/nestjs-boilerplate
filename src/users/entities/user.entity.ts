@@ -14,7 +14,7 @@ import {
 import { Role } from '../../roles/entities/role.entity';
 import { Status } from '../../statuses/entities/status.entity';
 import { FileEntity } from '../../files/entities/file.entity';
-import * as bcrypt from 'bcryptjs';
+import { hashPassword } from 'src/utils/functions/hash.helper';
 import { EntityHelper } from 'src/utils/entity-helper';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 
@@ -40,8 +40,7 @@ export class User extends EntityHelper {
   @BeforeUpdate()
   async setPassword() {
     if (this.previousPassword !== this.password && this.password) {
-      const salt = await bcrypt.genSalt();
-      this.password = await bcrypt.hash(this.password, salt);
+      this.password = await hashPassword(this.password);
     }
   }
 

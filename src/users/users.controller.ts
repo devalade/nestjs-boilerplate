@@ -1,38 +1,45 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Query,
+  Controller,
   DefaultValuePipe,
-  ParseIntPipe,
-  HttpStatus,
+  Delete,
+  Get,
   HttpCode,
+  HttpStatus,
+  Logger,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/roles/roles.decorator';
-import { RoleEnum } from 'src/roles/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/roles/roles.guard';
 import { infinityPagination } from 'src/utils/infinity-pagination';
+import { AbilityFactory, Action } from '../ability/ability.factory';
+import { AuthUser } from '../utils/decorator/auth-user.decorator';
+import { User } from './entities/user.entity';
+import { CheckAbilities } from '../ability/abilities.decorator';
+import { AbilitiesGuard } from '../ability/abilities.guard';
 
 @ApiBearerAuth()
-@Roles(RoleEnum.Admin)
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+// @Roles(RoleEnum.Admin)
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('Users')
 @Controller({
   path: 'users',
   version: '1',
 })
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  private readonly logger = new Logger();
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly abilityFactory: AbilityFactory,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -61,8 +68,10 @@ export class UsersController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne({ id: +id });
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Create, subject: User })
+  findOne(@AuthUser() user: User, @Param('id') id: string) {
+    return this.usersService.findOne({ id: id });
   }
 
   @Patch(':id')
@@ -72,6 +81,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(AbilitiesGuard)
+  @CheckAbilities({ action: Action.Delete, subject: User })
   remove(@Param('id') id: string) {
     return this.usersService.softDelete(id);
   }

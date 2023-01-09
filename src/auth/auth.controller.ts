@@ -72,6 +72,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   public async me(@Request() request) {
+    console.log();
     return this.service.me(request.user);
   }
 

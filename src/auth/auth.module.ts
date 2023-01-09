@@ -9,11 +9,13 @@ import { AnonymousStrategy } from './strategies/anonymous.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { ForgotModule } from 'src/forgot/forgot.module';
 import { MailModule } from 'src/mail/mail.module';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
   imports: [
     UsersModule,
     ForgotModule,
+    RolesModule,
     PassportModule,
     MailModule,
     JwtModule.registerAsync({

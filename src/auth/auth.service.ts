@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/entities/user.entity';
-import * as bcrypt from 'bcryptjs';
+import { verifyPassword } from 'src/utils/functions/hash.helper';
 import { AuthEmailLoginDto } from './dto/auth-email-login.dto';
 import { AuthUpdateDto } from './dto/auth-update.dto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
@@ -66,9 +66,9 @@ export class AuthService {
       );
     }
 
-    const isValidPassword = await bcrypt.compare(
-      loginDto.password,
+    const isValidPassword = await verifyPassword(
       user.password,
+      loginDto.password,
     );
 
     if (isValidPassword) {
@@ -155,7 +155,7 @@ export class AuthService {
 
     const role = await this.roleService.getRoleByCodeHandler(RoleEnum.User);
 
-    await this.usersService.create({
+    const user = await this.usersService.create({
       ...dto,
       email: dto.email,
       role: {
@@ -166,12 +166,12 @@ export class AuthService {
       } as Status,
       hash,
     });
-    // await this.mailService.userSignUp({
-    //   to: user.email,
-    //   data: {
-    //     hash,
-    //   },
-    // });
+    await this.mailService.userSignUp({
+      to: user.email,
+      data: {
+        hash,
+      },
+    });
   }
 
   async confirmEmail(hash: string): Promise<void> {
@@ -206,7 +206,7 @@ export class AuthService {
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'emailNotExists',
+            email: 'An email has been sent!',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -223,9 +223,7 @@ export class AuthService {
 
       await this.mailService.forgotPassword({
         to: email,
-        data: {
-          hash,
-        },
+        data: { hash },
       });
     }
   }
@@ -267,10 +265,9 @@ export class AuthService {
         const currentUser = await this.usersService.findOne({
           id: user.id,
         });
-
-        const isValidOldPassword = await bcrypt.compare(
-          userDto.oldPassword,
+        const isValidOldPassword = await verifyPassword(
           currentUser.password,
+          userDto.oldPassword,
         );
 
         if (!isValidOldPassword) {
