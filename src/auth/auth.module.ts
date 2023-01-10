@@ -10,6 +10,7 @@ import { UsersModule } from 'src/users/users.module';
 import { ForgotModule } from 'src/forgot/forgot.module';
 import { MailModule } from 'src/mail/mail.module';
 import { RolesModule } from '../roles/roles.module';
+import { AuthMailService } from './auth.email';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { RolesModule } from '../roles/roles.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, AnonymousStrategy],
-  exports: [AuthService],
+  providers: [AuthService, JwtStrategy, AnonymousStrategy, AuthMailService],
+  exports: [AuthService, AuthMailService],
 })
 export class AuthModule {}

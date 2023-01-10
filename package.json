@@ -29,7 +29,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "env-cmd jest --config ./test/jest-e2e.json"
+    "test:e2e": "env-cmd jest --config ./test/jest-e2e.json",
+    "dev:watch": "node src/mail/mjml-compiler.cjs"
   },
   "dependencies": {
     "@casl/ability": "^6.3.3",
@@ -51,11 +52,13 @@
     "fb": "2.0.0",
     "google-auth-library": "8.0.1",
     "handlebars": "4.7.7",
+    "lodash": "^4.17.21",
     "mjml": "^4.13.0",
     "multer": "1.4.4",
     "multer-s3": "2.10.0",
     "nestjs-i18n": "8.3.2",
     "nodemailer": "6.7.6",
+    "nodemon": "^2.0.20",
     "passport": "0.5.2",
     "passport-anonymous": "1.0.1",
     "passport-jwt": "4.0.0",

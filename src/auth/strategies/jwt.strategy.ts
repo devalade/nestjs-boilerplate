@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 type JwtPayload = Pick<User, 'id' | 'role'> & { iat: number; exp: number };
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
@@ -16,6 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: configService.get('auth.secret'),
+      algorithms: ['RS256', 'HS256'],
     });
   }
 

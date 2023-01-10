@@ -22,7 +22,7 @@ export default class CreateAdmin implements Seeder {
       .where('"User"."roleId" = :roleId', { roleId: adminRole.id })
       .getCount();
 
-    if (countAdmin === 0) {
+    if (countAdmin === 0 || adminRole) {
       await connection
         .createQueryBuilder()
         .insert()

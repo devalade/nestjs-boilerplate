@@ -16,8 +16,8 @@ import { SocialInterface } from 'src/social/interfaces/social.interface';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { UsersService } from 'src/users/users.service';
 import { ForgotService } from 'src/forgot/forgot.service';
-import { MailService } from 'src/mail/mail.service';
 import { RolesService } from '../roles/roles.service';
+import { AuthMailService } from './auth.email';
 
 @Injectable()
 export class AuthService {
@@ -26,7 +26,7 @@ export class AuthService {
     private usersService: UsersService,
     private roleService: RolesService,
     private forgotService: ForgotService,
-    private mailService: MailService,
+    private authMailService: AuthMailService,
   ) {}
 
   async validateLogin(
@@ -136,7 +136,7 @@ export class AuthService {
       });
     }
 
-    const jwtToken = await this.jwtService.sign({
+    const jwtToken = this.jwtService.sign({
       id: user.id,
       role: user.role,
     });
@@ -166,11 +166,15 @@ export class AuthService {
       } as Status,
       hash,
     });
-    await this.mailService.userSignUp({
+    // Send confirmation email
+    await this.authMailService.registrationConfirmationEmail({
       to: user.email,
-      data: {
-        hash,
-      },
+      data: { hash },
+    });
+
+    await this.authMailService.registrationConfirmationEmailWithCode({
+      to: user.email,
+      data: { hash },
     });
   }
 
@@ -221,7 +225,7 @@ export class AuthService {
         user,
       });
 
-      await this.mailService.forgotPassword({
+      await this.authMailService.forgotPassword({
         to: email,
         data: { hash },
       });
@@ -303,5 +307,9 @@ export class AuthService {
 
   async softDelete(user: User): Promise<void> {
     await this.usersService.softDelete(user.id);
+  }
+
+  public refreshToken(user: User) {
+    return user;
   }
 }

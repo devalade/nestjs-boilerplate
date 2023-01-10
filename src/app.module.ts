@@ -30,6 +30,8 @@ import { MailModule } from './mail/mail.module';
 import { HomeModule } from './home/home.module';
 import { RolesModule } from './roles/roles.module';
 import { AbilityModule } from './ability/ability.module';
+import { AccessTokenGuard } from './utils/decorator';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -87,6 +89,12 @@ import { AbilityModule } from './ability/ability.module';
     MailModule,
     HomeModule,
     AbilityModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AccessTokenGuard,
+    },
   ],
 })
 export class AppModule {}
