@@ -8,6 +8,7 @@ import {
   Post,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -18,7 +19,7 @@ import { AuthResetPasswordDto } from './dto/auth-reset-password.dto';
 import { AuthUpdateDto } from './dto/auth-update.dto';
 // import { AuthGuard } from '@nestjs/passport';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
-import { Public } from '../utils/decorator';
+import { AccessTokenGuard, Public } from '../utils/decorator';
 
 @ApiTags('Auth')
 @Controller({
@@ -42,6 +43,7 @@ export class AuthController {
     return this.service.validateLogin(loginDTO, true);
   }
 
+  @UseGuards(AccessTokenGuard)
   @Post('email/register')
   @HttpCode(HttpStatus.CREATED)
   @Public()

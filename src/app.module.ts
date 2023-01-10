@@ -50,7 +50,6 @@ import { APP_GUARD } from '@nestjs/core';
       ],
       envFilePath: ['.env'],
     }),
-
     ServeStaticModule.forRoot({
       rootPath: path.join(__dirname, '..', 'files'),
       serveRoot: '/uploads',
