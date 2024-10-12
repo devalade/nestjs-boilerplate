@@ -23,8 +23,10 @@ NestJS REST API boilerplate for typical project
 - [x] Sign in and sign up via email.
 - [x] Social sign in (Apple, Facebook, Google, Twitter).
 - [x] Admin and User roles.
+- [ ] CASL Ability integration ([@casl/ability](https://www.npmjs.com/package/@casl/ability))
 - [x] I18N ([nestjs-i18n](https://www.npmjs.com/package/nestjs-i18n)).
 - [x] File uploads. Support local and Amazon S3 drivers.
+- [ ] Mail templating with ([mjml](https://mjml.io)) and ([handlerbarsjs](https://handlebarsjs.com/installation/precompilation.html))
 - [x] Swagger.
 - [x] E2E and units tests.
 - [x] Docker.
@@ -50,7 +52,7 @@ docker-compose logs
 ```bash
 git clone https://github.com/devalade/nestjs-boilerplate.git
 cd my-app/
-cp env-example .env
+cp env.example .env
 ```
 
 Change `DATABASE_HOST=postgres` to `DATABASE_HOST=localhost`
@@ -75,9 +77,9 @@ npm run start:dev
 
 ## Links
 
-- Swagger: http://localhost:3000/docs
-- Adminer (client for DB): http://localhost:8080
-- Maildev: http://localhost:1080
+- Swagger: <http://localhost:3000/docs>
+- Adminer (client for DB): <http://localhost:8080>
+- Maildev: <http://localhost:1080>
 
 ## Automatic update of dependencies
 
